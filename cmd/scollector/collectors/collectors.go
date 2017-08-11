@@ -120,6 +120,8 @@ var (
 	WatchProcessesDotNet = func() {}
 
 	KeepalivedCommunity = ""
+
+	MetricPrefix = ""
 )
 
 func init() {
@@ -220,6 +222,9 @@ func registerInit(i initFunc) {
 }
 
 func Init(c *conf.Conf) {
+	if c.MetricPrefix != "" {
+		MetricPrefix = c.MetricPrefix
+	}
 	for _, f := range inits {
 		f(c)
 	}
@@ -238,6 +243,10 @@ func AddTS(md *opentsdb.MultiDataPoint, name string, ts int64, value interface{}
 	// Check if we really want that metric
 	if skipMetric(name) {
 		return
+	}
+	// Add Prefix
+	if MetricPrefix != "" {
+		name = MetricPrefix + "." + name
 	}
 
 	tags := t.Copy()

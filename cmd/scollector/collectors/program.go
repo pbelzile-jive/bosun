@@ -159,6 +159,9 @@ func (c *ProgramCollector) runProgram(dpchan chan<- *opentsdb.DataPoint) (progEr
 		if err := json.Unmarshal([]byte(t), &dp); err != nil {
 			errs = append(errs, fmt.Errorf("opentsdb.DataPoint: %v", err))
 		} else if dp.Valid() {
+			if MetricPrefix != "" {
+				dp.Metric = MetricPrefix + "." + dp.Metric
+			}
 			if dp.Tags == nil {
 				dp.Tags = opentsdb.TagSet{}
 			}
@@ -224,6 +227,9 @@ func parseTcollectorValue(line string) (*opentsdb.DataPoint, error) {
 	val, err := strconv.ParseFloat(sp[2], 64)
 	if err != nil {
 		return nil, fmt.Errorf("bad value: %s", sp[2])
+	}
+	if MetricPrefix != "" {
+		sp[0] = MetricPrefix + "." + sp[0]
 	}
 	if !opentsdb.ValidTSDBString(sp[0]) {
 		return nil, fmt.Errorf("bad metric: %s", sp[0])

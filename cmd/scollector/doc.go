@@ -116,6 +116,8 @@ matching on Linux.
 PProf (string): optional IP:Port binding to be used for debugging with pprof.
 Examples: localhost:6060 for loopback or :6060 for all IP addresses.
 
+MetricPrefix (string): optional Prefix prepended to all metrics path.
+
 Collector configuration keys
 
 Following are configurations for collectors that do not autodetect.

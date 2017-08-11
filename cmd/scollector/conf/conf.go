@@ -46,6 +46,9 @@ type Conf struct {
 	//Override default network interface expression
 	IfaceExpr string
 
+	// MetricPrefix prepended to all metrics path
+	MetricPrefix string
+
 	HAProxy        []HAProxy
 	SNMP           []SNMP
 	MIBS           map[string]MIB
