@@ -106,7 +106,7 @@ func InitChan(tsdbhost *url.URL, root string, ch chan *opentsdb.DataPoint) error
 	if err := checkClean(root, "metric root"); err != nil {
 		return err
 	}
-	u, err := tsdbhost.Parse("/api/put")
+	u, err := tsdbhost.Parse("api/put")
 	if err != nil {
 		return err
 	}
