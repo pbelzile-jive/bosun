@@ -87,6 +87,21 @@ func isPseudoFS(name string) (res bool) {
 	return
 }
 
+func mountMode(mount string) string {
+	mode := "?"
+	err := readLine("/proc/mounts", func(line string) error {
+		fields := strings.Fields(line)
+		if len(fields) > 4 && len(fields[3]) >= 2 && fields[1] == mount {
+			mode = fields[3][0:2]
+		}
+		return nil
+	})
+	if err != nil {
+		slog.Errorf("can not read '/proc/mounts': %v", err)
+	}
+	return mode
+}
+
 func c_iostat_linux() (opentsdb.MultiDataPoint, error) {
 	var md opentsdb.MultiDataPoint
 	var removables []string
@@ -175,8 +190,9 @@ func c_dfstat_blocks_linux() (opentsdb.MultiDataPoint, error) {
 		if isPseudoFS(fsType) {
 			return nil
 		}
-		tags := opentsdb.TagSet{"mount": mount}
-		os_tags := opentsdb.TagSet{"disk": mount}
+		mountMode := mountMode(mount)
+		tags := opentsdb.TagSet{"mount": mount, "mount-mode": mountMode}
+		os_tags := opentsdb.TagSet{"disk": mount, "disk-mode": mountMode}
 		metric := "linux.disk.fs."
 		ometric := "os.disk.fs."
 		if removable_fs(fs) {
